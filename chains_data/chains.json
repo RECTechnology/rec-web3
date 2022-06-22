@@ -1,0 +1,26 @@
+{
+  "56": {
+    "name": "Binance Smart Chain",
+    "symbol": "BNB",
+    "node": "https://bsc-dataseed.binance.org/",
+    "explorer": "https://bscscan.com"
+  },
+  "97": {
+    "name": "Binance Smart Chain Testnet",
+    "symbol": "BNB",
+    "node": "https://data-seed-prebsc-1-s1.binance.org:8545/",
+    "explorer": "https://testnet.bscscan.com"
+  },
+  "137": {
+    "name": "Polygon",
+    "symbol": "MATIC",
+    "node": "https://polygon-rpc.com",
+    "explorer": "https://polygonscan.com/"
+  },
+  "80001": {
+    "name": "Mumbay Polygon Testnet",
+    "symbol": "MATIC",
+    "node": "https://matic-mumbai.chainstacklabs.com",
+    "explorer": "https://mumbai.polygonscan.com/"
+  }
+}
