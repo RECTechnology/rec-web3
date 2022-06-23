@@ -1,6 +1,6 @@
 import time
 from unittest import TestCase
-from api.web3_manager import create_new_wallet, get_wallet_nft_balance, create_nft
+from api.web3_manager import create_new_wallet, get_wallet_nft_balance, create_nft, call_contract_function
 import json
 
 
@@ -23,8 +23,37 @@ class TestConnection(TestCase):
         wallet_address = "0x8958913128df3EbC88E78f6e55Efe3bcD7C2BCFf"
         admin_wallet = self.load_data_from_file('../api/config/config.json')['admin_wallet']
         hex_tx = create_nft(contract_address, wallet_address, nft_id, admin_wallet['address'], admin_wallet['private_key'])
+        time.sleep(5)
         assert len(hex_tx) == 66
 
     def load_data_from_file(self, route):
         with open(route) as f:
             return json.load(f)
+
+    def test_call_get_nft_balance(self):
+        contract_address = "0xaB81fFeB4aF5f90C6c85fe572f51DEEe5B12C792"
+        wallet_address = "0xD329C1aACac84348887e06707C88f961917129AC"
+        args = wallet_address
+        balance = call_contract_function(contract_address, 'balanceOf', args)
+        assert balance == 1
+
+    def test_call_create_nft(self):
+
+        nft_id = int(time.time())
+        contract_address = "0xaB81fFeB4aF5f90C6c85fe572f51DEEe5B12C792"
+        wallet_address = "0x8958913128df3EbC88E78f6e55Efe3bcD7C2BCFf"
+        admin_wallet = self.load_data_from_file('../api/config/config.json')['admin_wallet']
+        args = (wallet_address, nft_id)
+        tx_args = {"sender_address": admin_wallet['address'],
+                   "sender_private_key": admin_wallet['private_key']
+                   }
+        hex_tx = call_contract_function(contract_address, 'mint', args, tx_args)
+        time.sleep(5)
+        assert len(hex_tx) == 66
+
+    def test_call_get_contract_owner(self):
+        contract_address = "0xaB81fFeB4aF5f90C6c85fe572f51DEEe5B12C792"
+        wallet_address = "0xD329C1aACac84348887e06707C88f961917129AC"
+        args = None
+        balance = call_contract_function(contract_address, 'owner', args)
+        assert True

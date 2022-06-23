@@ -1,4 +1,4 @@
 {
-  "admin_wallet": {"address":  "<address>",
-    "private_key":  "<private_key>"}
+  "admin_wallet": {"address":  "<owner_address>",
+    "private_key":  "<owner_private_key>"}
 }
