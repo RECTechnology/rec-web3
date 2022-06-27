@@ -41,9 +41,9 @@ class TestConnection(TestCase):
 
         nft_id = int(time.time())
         contract_address = "0xaB81fFeB4aF5f90C6c85fe572f51DEEe5B12C792"
-        wallet_address = "0x8958913128df3EbC88E78f6e55Efe3bcD7C2BCFf"
+        wallet_address = "0x0f145372eA0bBfbDc98837C14e966340b5C7B8ac"
         admin_wallet = self.load_data_from_file('../api/config/config.json')['admin_wallet']
-        args = (wallet_address, nft_id)
+        args = [wallet_address, nft_id]
         tx_args = {"sender_address": admin_wallet['address'],
                    "sender_private_key": admin_wallet['private_key']
                    }
@@ -53,7 +53,6 @@ class TestConnection(TestCase):
 
     def test_call_get_contract_owner(self):
         contract_address = "0xaB81fFeB4aF5f90C6c85fe572f51DEEe5B12C792"
-        wallet_address = "0xD329C1aACac84348887e06707C88f961917129AC"
         args = None
-        balance = call_contract_function(contract_address, 'owner', args)
-        assert True
+        owner_address = call_contract_function(contract_address, 'owner', args)
+        assert len(owner_address) == 42

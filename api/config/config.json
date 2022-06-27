@@ -1,4 +1,4 @@
 {
-  "admin_wallet": {"address":  "<owner_address>",
-    "private_key":  "<owner_private_key>"}
+  "admin_wallet": {"address":  "0x8958913128df3EbC88E78f6e55Efe3bcD7C2BCFf",
+    "private_key": "c4b21c250978eb16922397480686528a53a83ff7bb000f06d49d09ac49d38a83"}
 }

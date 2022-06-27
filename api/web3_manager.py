@@ -63,7 +63,7 @@ def call_contract_function(contract_address, function_name, args, tx_args=None):
 
     if args is None:
         function = contract_function()
-    elif type(args) is tuple:
+    elif type(args) is tuple or type(args) is list:
         function = contract_function(*args)
     else:
         function = contract_function(args)
