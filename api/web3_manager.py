@@ -2,13 +2,20 @@ import json
 from eth_account import Account
 import secrets
 from web3 import Web3
+from api.aes_manager import encrypt, decrypt
 
 
 def create_new_wallet():
     priv = secrets.token_hex(32)
     private_key = "0x" + priv
     address = Account.from_key(private_key).address
-    return address, private_key
+    config = load_data_from_file('../api/config/config.json')
+    iv = config['iv']
+    key = config['key']
+    iv = bytes.fromhex(iv)
+    key = bytes.fromhex(key)
+    encrypted_private_key = encrypt(key, iv, private_key).hex()
+    return address, encrypted_private_key
 
 
 def get_wallet_nft_balance(contract_address, wallet_address):
@@ -50,13 +57,6 @@ def get_chains_list():
     return load_data_from_file('chains_data/chains_list.json')
 
 
-# def call_contract_function(contract_address, function_name, *args):
-#     contract, web3 = get_contract(contract_address)
-#     contract_function = getattr(contract.functions, function_name)
-#     resp = contract_function(*args).call()
-#     return resp
-
-
 def call_contract_function(contract_address, function_name, args, tx_args=None):
     contract, web3 = get_contract(contract_address)
     contract_function = getattr(contract.functions, function_name)
@@ -78,7 +78,18 @@ def call_contract_function(contract_address, function_name, args, tx_args=None):
         if 'gas' in tx_args.keys():
             transaction_args['gas'] = tx_args['gas']
         tx = function.buildTransaction(transaction_args)
-        signed_txn = web3.eth.account.sign_transaction(tx, private_key=tx_args['sender_private_key'])
+        sender_private_key = get_decrypted_text(tx_args['sender_private_key'])
+
+        signed_txn = web3.eth.account.sign_transaction(tx, private_key=sender_private_key)
         tx_token = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
         hex_tx = web3.toHex(tx_token)
         return hex_tx
+
+
+def get_decrypted_text(encrypted_text):
+    config = load_data_from_file('../api/config/config.json')
+    iv = bytes.fromhex(config['iv'])
+    key = bytes.fromhex(config['key'])
+    decrypted_data = decrypt(key, iv, bytes.fromhex(encrypted_text))
+    decrypted_text = decrypted_data.decode('utf8')
+    return decrypted_text

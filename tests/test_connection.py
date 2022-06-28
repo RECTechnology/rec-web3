@@ -1,6 +1,7 @@
 import time
 from unittest import TestCase
 from api.web3_manager import create_new_wallet, get_wallet_nft_balance, create_nft, call_contract_function
+from api.aes_manager import encrypt, decrypt
 import json
 
 
@@ -9,7 +10,7 @@ class TestConnection(TestCase):
     def test_get_new_wallete(self):
         address, private_key = create_new_wallet()
         assert len(address) == 42
-        assert len(private_key) == 66
+        assert len(private_key) == 160
 
     def test_get_nft_balance(self):
         contract_address = "0xaB81fFeB4aF5f90C6c85fe572f51DEEe5B12C792"
@@ -44,8 +45,13 @@ class TestConnection(TestCase):
         wallet_address = "0x0f145372eA0bBfbDc98837C14e966340b5C7B8ac"
         admin_wallet = self.load_data_from_file('../api/config/config.json')['admin_wallet']
         args = [wallet_address, nft_id]
+        config = self.load_data_from_file('../api/config/config.json')
+        iv = bytes.fromhex(config['iv'])
+        key = bytes.fromhex(config['key'])
+        enctypted_data = encrypt(key, iv, admin_wallet['private_key'])
+        encrypted_text = enctypted_data.hex()
         tx_args = {"sender_address": admin_wallet['address'],
-                   "sender_private_key": admin_wallet['private_key']
+                   "sender_private_key": encrypted_text
                    }
         hex_tx = call_contract_function(contract_address, 'mint', args, tx_args)
         time.sleep(5)
@@ -56,3 +62,14 @@ class TestConnection(TestCase):
         args = None
         owner_address = call_contract_function(contract_address, 'owner', args)
         assert len(owner_address) == 42
+
+    def test_encrypt_decrypt(self):
+        plain_text = 'my plain text'
+        config = self.load_data_from_file('../api/config/config.json')
+        iv = bytes.fromhex(config['iv'])
+        key = bytes.fromhex(config['key'])
+        enctypted_data = encrypt(key, iv, plain_text)
+        encrypted_text = enctypted_data.hex()
+        decrypted_data = decrypt(key, iv, bytes.fromhex(encrypted_text))
+        decrypted_text = decrypted_data.decode('utf8')
+        assert decrypted_text == plain_text
