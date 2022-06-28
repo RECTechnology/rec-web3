@@ -11,6 +11,11 @@ To install the dependencies
 pip install -r requirements.txt
 ```
 
+## Run
+
+```
+python api/app.py
+```
 
 ## Endpoints
 
