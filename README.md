@@ -14,7 +14,7 @@ pip install -r requirements.txt
 ## Run
 
 ```
-python api/app.py
+python main.py
 ```
 
 ## Endpoints
