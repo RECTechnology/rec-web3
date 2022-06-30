@@ -1,3 +1,5 @@
 {
-  "0xaB81fFeB4aF5f90C6c85fe572f51DEEe5B12C792": {"name": "fake_nft", "chain": "97", "abi": "fake_nft_abi"}
+  "0xaf33ecfb3e5d07c232fc3ec8992e7de43485a70a": {"name": "sNFT_test", "chain": "3", "abi": "fake_nft2_abi"},
+  "0xaB81fFeB4aF5f90C6c85fe572f51DEEe5B12C792": {"name": "fake_nft", "chain": "97", "abi": "fake_nft_abi"},
+  "0xaf33ecfb3E5D07C232fC3Ec8992e7de43485a70a": {"name": "s_nft_test", "chain": "97", "abi": "fake_nft_abi"}
 }

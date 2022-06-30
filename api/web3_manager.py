@@ -27,7 +27,7 @@ def get_wallet_nft_balance(contract_address, wallet_address):
 def create_nft(contract_address, wallet, nft_id, admin_address, admin_pk):
     contract, web3 = get_contract(contract_address)
 
-    mint_tx = contract.functions.mint(wallet, nft_id)
+    mint_tx = contract.functions.mint(wallet)
     mint_tx = mint_tx.buildTransaction({
         'from': admin_address,
         'gasPrice': int(web3.eth.gasPrice),
@@ -44,7 +44,7 @@ def get_contract(contract_address):
     chain = load_data_from_file('../chains_data/chains.json')[contract_data['chain']]
     web3 = Web3(Web3.HTTPProvider(chain['node']))
     contract_abi = load_data_from_file('../chains_data/contracts_abi.json')[contract_data['abi']]
-    contract = web3.eth.contract(address=contract_address, abi=contract_abi)
+    contract = web3.eth.contract(address=web3.toChecksumAddress(contract_address), abi=contract_abi)
     return contract, web3
 
 

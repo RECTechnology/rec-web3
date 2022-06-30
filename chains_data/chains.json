@@ -1,4 +1,10 @@
 {
+  "3": {
+    "name": "Red de prueba Ropsten",
+    "symbol": "ETH",
+    "node": "https://ropsten.infura.io/v3/6f8a8539773a4f99a21851392a005ec7",
+    "explorer": "https://ropsten.etherscan.io"
+  },
   "56": {
     "name": "Binance Smart Chain",
     "symbol": "BNB",
