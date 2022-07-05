@@ -19,4 +19,4 @@ jobs:
     - name: Docker Registry Login
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin ${{ secrets.DOCKER_REGISTRY }}
     - name: Upload Docker image to Registry
-      run: docker push rec-web3-atarca-flask
+      run: docker push ${{ secrets.DOCKER_REGISTRY }}/rec-web3-atarca-flask
