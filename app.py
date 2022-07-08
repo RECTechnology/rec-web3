@@ -36,12 +36,13 @@ def create_nft_():
 def contract_function_call():
     request_data = request.json
     print(request_data)
+    function_name = request_data['function_name']
     contract_address = request_data['contract_address']
 
     args = request_data['args'] if 'args' in request_data.keys() else None
     tx_args = request_data['tx_args'] if 'tx_args' in request_data.keys() else None
 
-    transaction = call_contract_function(contract_address, 'mint', args, tx_args)
+    transaction = call_contract_function(contract_address, function_name, args, tx_args)
     return jsonify({'message': 'success', 'transaction': transaction})
 
 

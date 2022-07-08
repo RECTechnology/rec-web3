@@ -68,22 +68,25 @@ def call_contract_function(contract_address, function_name, args, tx_args=None):
     else:
         function = contract_function(args)
 
-    if tx_args is None:
-        return function.call()
-    else:
-        transaction_args ={}
-        transaction_args['from'] = tx_args['sender_address']
-        transaction_args['gasPrice'] = int(web3.eth.gasPrice)
-        transaction_args['nonce'] = web3.eth.get_transaction_count(tx_args['sender_address'])
-        if 'gas' in tx_args.keys():
-            transaction_args['gas'] = tx_args['gas']
-        tx = function.buildTransaction(transaction_args)
-        sender_private_key = get_decrypted_text(tx_args['sender_private_key'])
+    try:
+        if tx_args is None:
+            return {'error': '', 'message': function.call()}
+        else:
+            transaction_args ={}
+            transaction_args['from'] = tx_args['sender_address']
+            transaction_args['gasPrice'] = int(web3.eth.gasPrice)
+            transaction_args['nonce'] = web3.eth.get_transaction_count(tx_args['sender_address'])
+            if 'gas' in tx_args.keys():
+                transaction_args['gas'] = tx_args['gas']
+            tx = function.buildTransaction(transaction_args)
+            sender_private_key = get_decrypted_text(tx_args['sender_private_key'])
 
-        signed_txn = web3.eth.account.sign_transaction(tx, private_key=sender_private_key)
-        tx_token = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
-        hex_tx = web3.toHex(tx_token)
-        return hex_tx
+            signed_txn = web3.eth.account.sign_transaction(tx, private_key=sender_private_key)
+            tx_token = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
+            hex_tx = web3.toHex(tx_token)
+            return {'message': hex_tx, 'error': ''}
+    except Exception as e:
+        return {'message': '', 'error': e}
 
 
 def get_decrypted_text(encrypted_text):

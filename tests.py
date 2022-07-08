@@ -36,8 +36,9 @@ class TestConnection(TestCase):
         contract_address = "0xaf33ecfb3e5d07c232fc3ec8992e7de43485a70a"
         wallet_address = "0xD329C1aACac84348887e06707C88f961917129AC"
         args = wallet_address
-        balance = call_contract_function(contract_address, 'balanceOf', args)
-        assert balance == 2
+        resp = call_contract_function(contract_address, 'balanceOf', args)
+        assert resp['error'] == ''
+        assert resp['message'] == 2
 
     def test_call_create_nft(self):
 
@@ -53,18 +54,20 @@ class TestConnection(TestCase):
         tx_args = {"sender_address": admin_wallet['address'],
                    "sender_private_key": encrypted_text
                    }
-        hex_tx = call_contract_function(contract_address, 'mint', args, tx_args)
+        resp = call_contract_function(contract_address, 'mint', args, tx_args)
         # wait to validate tx before calling next tx
         time.sleep(10)
-        assert len(hex_tx) == 66
+        assert resp['error'] == ''
+        assert len(resp['message']) == 66
 
     def test_call_get_contract_owner(self):
         contract_address = "0xaf33ecfb3e5d07c232fc3ec8992e7de43485a70a"
         admin_address = self.load_data_from_file('./api/config/config.json')['admin_wallet']['address']
         args = None
-        owner_address = call_contract_function(contract_address, 'owner', args)
-        assert len(owner_address) == 42
-        assert owner_address == admin_address
+        resp = call_contract_function(contract_address, 'owner', args)
+        assert resp['error'] == ''
+        assert len(resp['message']) == 42
+        assert resp['message'] == admin_address
 
     def test_encrypt_decrypt(self):
         plain_text = 'my plain text'
