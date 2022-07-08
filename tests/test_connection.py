@@ -22,7 +22,7 @@ class TestConnection(TestCase):
         nft_id = int(time.time())
         contract_address = "0xaf33ecfb3e5d07c232fc3ec8992e7de43485a70a"
         wallet_address = "0x8958913128df3EbC88E78f6e55Efe3bcD7C2BCFf"
-        admin_wallet = self.load_data_from_file('../api/config/config.json')['admin_wallet']
+        admin_wallet = self.load_data_from_file('./api/config/config.json')['admin_wallet']
         hex_tx = create_nft(contract_address, wallet_address, nft_id, admin_wallet['address'], admin_wallet['private_key'])
         # wait to validate tx before calling next tx
         time.sleep(10)
@@ -43,9 +43,9 @@ class TestConnection(TestCase):
 
         contract_address = "0xaf33ecfb3e5d07c232fc3ec8992e7de43485a70a"
         wallet_address = "0x0f145372eA0bBfbDc98837C14e966340b5C7B8ac"
-        admin_wallet = self.load_data_from_file('../api/config/config.json')['admin_wallet']
+        admin_wallet = self.load_data_from_file('./api/config/config.json')['admin_wallet']
         args = wallet_address
-        config = self.load_data_from_file('../api/config/config.json')
+        config = self.load_data_from_file('./api/config/config.json')
         iv = bytes.fromhex(config['iv'])
         key = bytes.fromhex(config['key'])
         enctypted_data = encrypt(key, iv, admin_wallet['private_key'])
@@ -60,7 +60,7 @@ class TestConnection(TestCase):
 
     def test_call_get_contract_owner(self):
         contract_address = "0xaf33ecfb3e5d07c232fc3ec8992e7de43485a70a"
-        admin_address = self.load_data_from_file('../api/config/config.json')['admin_wallet']['address']
+        admin_address = self.load_data_from_file('./api/config/config.json')['admin_wallet']['address']
         args = None
         owner_address = call_contract_function(contract_address, 'owner', args)
         assert len(owner_address) == 42
@@ -68,7 +68,7 @@ class TestConnection(TestCase):
 
     def test_encrypt_decrypt(self):
         plain_text = 'my plain text'
-        config = self.load_data_from_file('../api/config/config.json')
+        config = self.load_data_from_file('./api/config/config.json')
         iv = bytes.fromhex(config['iv'])
         key = bytes.fromhex(config['key'])
         enctypted_data = encrypt(key, iv, plain_text)

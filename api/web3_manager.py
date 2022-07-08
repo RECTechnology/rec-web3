@@ -9,7 +9,7 @@ def create_new_wallet():
     priv = secrets.token_hex(32)
     private_key = "0x" + priv
     address = Account.from_key(private_key).address
-    config = load_data_from_file('../api/config/config.json')
+    config = load_data_from_file('./api/config/config.json')
     iv = config['iv']
     key = config['key']
     iv = bytes.fromhex(iv)
@@ -40,10 +40,10 @@ def create_nft(contract_address, wallet, nft_id, admin_address, admin_pk):
 
 
 def get_contract(contract_address):
-    contract_data = load_data_from_file('../chains_data/contracts.json')[contract_address]
-    chain = load_data_from_file('../chains_data/chains.json')[contract_data['chain']]
+    contract_data = load_data_from_file('./chains_data/contracts.json')[contract_address]
+    chain = load_data_from_file('./chains_data/chains.json')[contract_data['chain']]
     web3 = Web3(Web3.HTTPProvider(chain['node']))
-    contract_abi = load_data_from_file('../chains_data/contracts_abi.json')[contract_data['abi']]
+    contract_abi = load_data_from_file('./chains_data/contracts_abi.json')[contract_data['abi']]
     contract = web3.eth.contract(address=web3.toChecksumAddress(contract_address), abi=contract_abi)
     return contract, web3
 
@@ -87,7 +87,7 @@ def call_contract_function(contract_address, function_name, args, tx_args=None):
 
 
 def get_decrypted_text(encrypted_text):
-    config = load_data_from_file('../api/config/config.json')
+    config = load_data_from_file('./api/config/config.json')
     iv = bytes.fromhex(config['iv'])
     key = bytes.fromhex(config['key'])
     decrypted_data = decrypt(key, iv, bytes.fromhex(encrypted_text))
