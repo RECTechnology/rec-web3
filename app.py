@@ -42,8 +42,8 @@ def contract_function_call():
     args = request_data['args'] if 'args' in request_data.keys() else None
     tx_args = request_data['tx_args'] if 'tx_args' in request_data.keys() else None
 
-    transaction = call_contract_function(contract_address, function_name, args, tx_args)
-    return jsonify({'message': 'success', 'transaction': transaction})
+    resp = call_contract_function(contract_address, function_name, args, tx_args)
+    return jsonify(resp)
 
 
 if __name__ == '__main__':
