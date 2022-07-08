@@ -86,7 +86,7 @@ def call_contract_function(contract_address, function_name, args, tx_args=None):
             hex_tx = web3.toHex(tx_token)
             return {'message': hex_tx, 'error': ''}
     except Exception as e:
-        return {'message': '', 'error': e}
+        return {'message': '', 'error': str(e)}
 
 
 def get_decrypted_text(encrypted_text):
