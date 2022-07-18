@@ -6,6 +6,7 @@ import json
 
 
 class TestConnection(TestCase):
+    contract_address = "0xaf33ecfb3e5d07c232fc3ec8992e7de43485a70a"
 
     def test_get_new_wallete(self):
         address, private_key = create_new_wallet()
@@ -13,17 +14,15 @@ class TestConnection(TestCase):
         assert len(private_key) == 160
 
     def test_get_nft_balance(self):
-        contract_address = "0xaf33ecfb3e5d07c232fc3ec8992e7de43485a70a"
         wallet_address = "0xD329C1aACac84348887e06707C88f961917129AC"
-        balance = get_wallet_nft_balance(contract_address, wallet_address)
-        assert balance == 2
+        balance = get_wallet_nft_balance(self.contract_address, wallet_address)
+        assert balance == 5
 
     def test_create_nft(self):
         nft_id = int(time.time())
-        contract_address = "0xaf33ecfb3e5d07c232fc3ec8992e7de43485a70a"
         wallet_address = "0x8958913128df3EbC88E78f6e55Efe3bcD7C2BCFf"
         admin_wallet = self.load_data_from_file('./api/config/config.json')['admin_wallet']
-        hex_tx = create_nft(contract_address, wallet_address, nft_id, admin_wallet['address'], admin_wallet['private_key'])
+        hex_tx = create_nft(self.contract_address, wallet_address, nft_id, admin_wallet['address'], admin_wallet['private_key'])
         # wait to validate tx before calling next tx
         time.sleep(10)
         assert len(hex_tx) == 66
@@ -33,16 +32,13 @@ class TestConnection(TestCase):
             return json.load(f)
 
     def test_call_get_nft_balance(self):
-        contract_address = "0xaf33ecfb3e5d07c232fc3ec8992e7de43485a70a"
         wallet_address = "0xD329C1aACac84348887e06707C88f961917129AC"
         args = wallet_address
-        resp = call_contract_function(contract_address, 'balanceOf', args)
+        resp = call_contract_function(self.contract_address, 'balanceOf', args)
         assert resp['error'] == ''
-        assert resp['message'] == 2
+        assert resp['message'] == 5
 
     def test_call_create_nft(self):
-
-        contract_address = "0xaf33ecfb3e5d07c232fc3ec8992e7de43485a70a"
         wallet_address = "0x0f145372eA0bBfbDc98837C14e966340b5C7B8ac"
         admin_wallet = self.load_data_from_file('./api/config/config.json')['admin_wallet']
         args = wallet_address
@@ -54,17 +50,16 @@ class TestConnection(TestCase):
         tx_args = {"sender_address": admin_wallet['address'],
                    "sender_private_key": encrypted_text
                    }
-        resp = call_contract_function(contract_address, 'mint', args, tx_args)
+        resp = call_contract_function(self.contract_address, 'mint', args, tx_args)
         # wait to validate tx before calling next tx
         time.sleep(10)
         assert resp['error'] == ''
         assert len(resp['message']) == 66
 
     def test_call_get_contract_owner(self):
-        contract_address = "0xaf33ecfb3e5d07c232fc3ec8992e7de43485a70a"
         admin_address = self.load_data_from_file('./api/config/config.json')['admin_wallet']['address']
         args = None
-        resp = call_contract_function(contract_address, 'owner', args)
+        resp = call_contract_function(self.contract_address, 'owner', args)
         assert resp['error'] == ''
         assert len(resp['message']) == 42
         assert resp['message'] == admin_address

@@ -1,5 +1,10 @@
 {
   "0xaf33ecfb3e5d07c232fc3ec8992e7de43485a70a": {"name": "sNFT_test", "chain": "3", "abi": "fake_nft2_abi"},
+
+  "0x021FE99b04663B5Cf7ffbbC5fbC1eA87fdDE56ed": {"name": "Sharable_test", "chain": "3", "abi": "Sharable_test_abi"},
+  "0xC014900C972fC25499f141102a046c304D9670F1": {"name": "Endorsement_test", "chain": "3", "abi": "Endorsement_test_abi"},
+  "0x25f4c7adb709F47eb9b276F64409FC963d8c0CD0": {"name": "Like_test", "chain": "3", "abi": "Like_test_abi"},
+
   "0xaB81fFeB4aF5f90C6c85fe572f51DEEe5B12C792": {"name": "fake_nft", "chain": "97", "abi": "fake_nft_abi"},
-  "0xaf33ecfb3E5D07C232fC3Ec8992e7de43485a70a": {"name": "s_nft_test", "chain": "97", "abi": "fake_nft_abi"}
+  "0xaf33ecfb3E5D07C232fC3Ec8992e7de43485a70a_": {"name": "s_nft_test", "chain": "97", "abi": "fake_nft_abi"}
 }
