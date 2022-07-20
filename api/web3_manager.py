@@ -57,7 +57,14 @@ def get_chains_list():
     return load_data_from_file('chains_data/chains_list.json')
 
 
-def call_contract_function(contract_address, function_name, args, tx_args=None):
+def get_wallet_nonce(contract_address, address):
+    contract_data = load_data_from_file('./chains_data/contracts.json')[contract_address]
+    chain = load_data_from_file('./chains_data/chains.json')[contract_data['chain']]
+    web3 = Web3(Web3.HTTPProvider(chain['node']))
+    return web3.eth.get_transaction_count(address)
+
+
+def call_contract_function(contract_address, function_name, args, tx_args=None, nonce=None):
     contract, web3 = get_contract(contract_address)
     contract_function = getattr(contract.functions, function_name)
 
@@ -72,10 +79,16 @@ def call_contract_function(contract_address, function_name, args, tx_args=None):
         if tx_args is None:
             return {'error': '', 'message': function.call()}
         else:
-            transaction_args ={}
+            transaction_args = {}
             transaction_args['from'] = tx_args['sender_address']
             transaction_args['gasPrice'] = int(web3.eth.gasPrice)
-            transaction_args['nonce'] = web3.eth.get_transaction_count(tx_args['sender_address'])
+            current_nonce = web3.eth.get_transaction_count(tx_args['sender_address'])
+            if nonce is not None:
+                if nonce < current_nonce:
+                    return {'message': '', 'error': 'nonce cant be lower than ' + str(nonce)}
+                transaction_args['nonce'] = nonce
+            else:
+                transaction_args['nonce'] = nonce or web3.eth.get_transaction_count(tx_args['sender_address'])
             if 'gas' in tx_args.keys():
                 transaction_args['gas'] = tx_args['gas']
             tx = function.buildTransaction(transaction_args)

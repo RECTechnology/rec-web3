@@ -1,6 +1,6 @@
 import time
 from unittest import TestCase
-from api.web3_manager import create_new_wallet, get_wallet_nft_balance, create_nft, call_contract_function
+from api.web3_manager import create_new_wallet, get_wallet_nft_balance, create_nft, call_contract_function, get_wallet_nonce
 from api.aes_manager import encrypt, decrypt
 import json
 
@@ -17,6 +17,11 @@ class TestConnection(TestCase):
         wallet_address = "0xD329C1aACac84348887e06707C88f961917129AC"
         balance = get_wallet_nft_balance(self.contract_address, wallet_address)
         assert balance == 5
+
+    def test_get_account_nonce(self):
+        wallet_address = "0x8958913128df3EbC88E78f6e55Efe3bcD7C2BCFf"
+        nonce = get_wallet_nonce(self.contract_address, wallet_address)
+        assert nonce > 70
 
     def test_create_nft(self):
         nft_id = int(time.time())
