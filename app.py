@@ -10,10 +10,14 @@ def test():
 
 @app.route('/get_nonce')
 def get_nonce():
-    request_data = request.json
-    print(request_data)
-    contract_address = request_data['contract_address']
-    wallet_address = request_data['wallet']
+    args = request.args
+    if 'contract_address' not in args:
+        return jsonify({'message': '', 'error': 'contract_address param is required'})
+    if 'wallet' not in args:
+        return jsonify({'message': '', 'error': 'wallet param is required'})
+    print(args)
+    contract_address = args['contract_address']
+    wallet_address = args['wallet']
     nonce = get_wallet_nonce(contract_address, wallet_address)
     return jsonify({'message': 'success', 'nonce': nonce})
 
