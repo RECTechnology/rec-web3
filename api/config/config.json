@@ -1,4 +1,5 @@
 {
+  "TODO":"add config.json.dist for prod",
   "admin_wallet": {"address":  "0x8958913128df3EbC88E78f6e55Efe3bcD7C2BCFf",
     "private_key": "c4b21c250978eb16922397480686528a53a83ff7bb000f06d49d09ac49d38a83"},
   "iv": "341db216fa0d994770828cd3ed11e4ea",
