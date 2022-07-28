@@ -97,9 +97,10 @@ def call_contract_function(contract_address, function_name, args, tx_args=None, 
             sender_private_key = get_decrypted_text(tx_args['sender_private_key'])
 
             signed_txn = web3.eth.account.sign_transaction(tx, private_key=sender_private_key)
-            tx_token = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
-            hex_tx = web3.toHex(tx_token)
-            return {'message': hex_tx, 'error': ''}
+            resp = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
+            hex_resp = web3.toHex(resp)
+            if len(hex_resp) == 66: return {'message': hex_resp, 'error': ''}
+            return {'message': "", 'error': hex_resp}
     except Exception as e:
         return {'message': '', 'error': str(e)}
 
