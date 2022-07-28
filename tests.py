@@ -1,6 +1,7 @@
 import time
 from unittest import TestCase
-from api.web3_manager import create_new_wallet, get_wallet_nft_balance, create_nft, call_contract_function, get_wallet_nonce
+from api.web3_manager import create_new_wallet, get_wallet_nft_balance, create_nft, call_contract_function,\
+    get_wallet_nonce, get_wallet_balance, transfer
 from api.aes_manager import encrypt, decrypt
 import json
 
@@ -17,6 +18,11 @@ class TestConnection(TestCase):
         wallet_address = "0xD329C1aACac84348887e06707C88f961917129AC"
         balance = get_wallet_nft_balance(self.contract_address, wallet_address)
         assert balance == 5
+
+    def test_get_balance(self):
+        wallet_address = "0x8958913128df3EbC88E78f6e55Efe3bcD7C2BCFf"
+        balance = get_wallet_balance(self.contract_address, wallet_address)
+        assert balance > 0
 
     def test_get_account_nonce(self):
         wallet_address = "0x8958913128df3EbC88E78f6e55Efe3bcD7C2BCFf"
@@ -79,3 +85,18 @@ class TestConnection(TestCase):
         decrypted_data = decrypt(key, iv, bytes.fromhex(encrypted_text))
         decrypted_text = decrypted_data.decode('utf8')
         assert decrypted_text == plain_text
+
+    def test_transfer(self):
+        wallet_address = "0x0f145372eA0bBfbDc98837C14e966340b5C7B8ac"
+        admin_wallet = self.load_data_from_file('./api/config/config.json')['admin_wallet']
+        config = self.load_data_from_file('./api/config/config.json')
+        iv = bytes.fromhex(config['iv'])
+        key = bytes.fromhex(config['key'])
+        enctypted_data = encrypt(key, iv, admin_wallet['private_key'])
+        encrypted_text = enctypted_data.hex()
+
+        resp = transfer(self.contract_address, 1, wallet_address, admin_wallet['address'], encrypted_text)
+        # wait to validate tx before calling next tx
+        #time.sleep(10)
+        assert resp['error'] == ''
+        assert len(resp['message']) == 66

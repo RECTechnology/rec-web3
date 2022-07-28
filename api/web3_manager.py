@@ -18,6 +18,11 @@ def create_new_wallet():
     return address, encrypted_private_key
 
 
+def get_wallet_balance(contract_address, wallet_address):
+    contract, web3 = get_contract(contract_address)
+    resp = float(web3.fromWei(web3.eth.get_balance(wallet_address), 'ether'))
+    return resp
+
 def get_wallet_nft_balance(contract_address, wallet_address):
     contract, web3 = get_contract(contract_address)
     resp = contract.functions.balanceOf(wallet_address).call()
@@ -85,19 +90,51 @@ def call_contract_function(contract_address, function_name, args, tx_args=None, 
             current_nonce = web3.eth.get_transaction_count(tx_args['sender_address'])
             if nonce is not None:
                 if nonce < current_nonce:
-                    return {'message': '', 'error': 'nonce cant be lower than ' + str(nonce)}
+                    return {'message': '', 'error': 'nonce cant be lower than ' + str(current_nonce)}
                 transaction_args['nonce'] = nonce
             else:
-                transaction_args['nonce'] = nonce or web3.eth.get_transaction_count(tx_args['sender_address'])
+                transaction_args['nonce'] = current_nonce
             if 'gas' in tx_args.keys():
                 transaction_args['gas'] = tx_args['gas']
             tx = function.buildTransaction(transaction_args)
             sender_private_key = get_decrypted_text(tx_args['sender_private_key'])
 
             signed_txn = web3.eth.account.sign_transaction(tx, private_key=sender_private_key)
-            tx_token = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
-            hex_tx = web3.toHex(tx_token)
+            tx_hash = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
+            hex_tx = web3.toHex(tx_hash)
             return {'message': hex_tx, 'error': ''}
+    except Exception as e:
+        return {'message': '', 'error': str(e)}
+
+
+def transfer(contract_address, amount, to, from_addres, from_pk, nonce=None):
+    _, web3 = get_contract(contract_address)
+    try:
+        transaction_args = {}
+        current_nonce = web3.eth.get_transaction_count(from_addres)
+        if nonce is not None:
+            if nonce < current_nonce:
+                return {'message': '', 'error': 'nonce cant be lower than ' + str(current_nonce)}
+            transaction_args['nonce'] = nonce
+        else:
+            transaction_args['nonce'] = current_nonce
+
+        transaction_args['to'] = to
+        transaction_args['value'] = web3.toWei(amount, 'ether')
+        transaction_args['gas'] = 2000000
+        transaction_args['gasPrice'] = int(web3.eth.gasPrice)
+        print(amount)
+        print(from_addres)
+        print(transaction_args)
+        sender_private_key = get_decrypted_text(from_pk)
+        # sign the transaction
+        signed_tx = web3.eth.account.sign_transaction(transaction_args, sender_private_key)
+
+        # send transaction
+        tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+
+        hex_tx = web3.toHex(tx_hash)
+        return {'message': hex_tx, 'error': ''}
     except Exception as e:
         return {'message': '', 'error': str(e)}
 
