@@ -1,6 +1,8 @@
 import json
+import time
+
 from eth_account import Account
-import secrets
+import secrets, sys
 from web3 import Web3
 from api.aes_manager import encrypt, decrypt
 
@@ -100,11 +102,37 @@ def call_contract_function(contract_address, function_name, args, tx_args=None, 
             sender_private_key = get_decrypted_text(tx_args['sender_private_key'])
 
             signed_txn = web3.eth.account.sign_transaction(tx, private_key=sender_private_key)
-            tx_hash = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
-            hex_tx = web3.toHex(tx_hash)
-            return {'message': hex_tx, 'error': ''}
+            resp = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
+            hex_resp = web3.toHex(resp)
+            if len(hex_resp) == 66: return {'message': hex_resp, 'error': ''}
+            return {'message': "", 'error': hex_resp}
     except Exception as e:
         return {'message': '', 'error': str(e)}
+
+
+def get_decrypted_text(encrypted_text):
+    config = load_data_from_file('./api/config/config.json')
+    iv = bytes.fromhex(config['iv'])
+    key = bytes.fromhex(config['key'])
+    decrypted_data = decrypt(key, iv, bytes.fromhex(encrypted_text))
+    decrypted_text = decrypted_data.decode('utf8')
+    return decrypted_text
+
+
+def get_tx_status(contract_address, tx_id, deadline=600):
+    _, web3 = get_contract(contract_address)
+    tx_deadline = time.time() + deadline
+    while time.time() < tx_deadline:
+        try:
+            tx_data = web3.eth.get_transaction_receipt(tx_id)
+            if tx_data['status'] == 1:
+                token_id = web3.toInt(tx_data.logs[0].topics[3])
+                return {"error": "", "status": tx_data['status'],"from": tx_data['from'], "to": tx_data['to'], "token_id": token_id}
+            else:
+                return {"error": "", "status": tx_data['status'], "from": tx_data['from'], "to": tx_data['to']}
+        except Exception as e:
+            pass
+    return {"error": "Unable to get transaction status"}
 
 
 def transfer(contract_address, amount, to, from_addres, from_pk, nonce=None):
@@ -131,18 +159,10 @@ def transfer(contract_address, amount, to, from_addres, from_pk, nonce=None):
         signed_tx = web3.eth.account.sign_transaction(transaction_args, sender_private_key)
 
         # send transaction
-        tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+        resp = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
 
-        hex_tx = web3.toHex(tx_hash)
-        return {'message': hex_tx, 'error': ''}
+        hex_resp = web3.toHex(resp)
+        if len(hex_resp) == 66: return {'message': hex_resp, 'error': ''}
+        return {'message': "", 'error': hex_resp}
     except Exception as e:
         return {'message': '', 'error': str(e)}
-
-
-def get_decrypted_text(encrypted_text):
-    config = load_data_from_file('./api/config/config.json')
-    iv = bytes.fromhex(config['iv'])
-    key = bytes.fromhex(config['key'])
-    decrypted_data = decrypt(key, iv, bytes.fromhex(encrypted_text))
-    decrypted_text = decrypted_data.decode('utf8')
-    return decrypted_text

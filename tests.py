@@ -1,13 +1,16 @@
 import time
 from unittest import TestCase
 from api.web3_manager import create_new_wallet, get_wallet_nft_balance, create_nft, call_contract_function,\
-    get_wallet_nonce, get_wallet_balance, transfer
+    get_wallet_nonce, get_tx_status, get_wallet_balance, transfer
 from api.aes_manager import encrypt, decrypt
 import json
 
 
 class TestConnection(TestCase):
     contract_address = "0xaf33ecfb3e5d07c232fc3ec8992e7de43485a70a"
+    sharable_contract_address = "0x021FE99b04663B5Cf7ffbbC5fbC1eA87fdDE56ed"
+    like_contract_address = "0x25f4c7adb709F47eb9b276F64409FC963d8c0CD0"
+    endorse_contract_address = "0xC014900C972fC25499f141102a046c304D9670F1"
 
     def test_get_new_wallete(self):
         address, private_key = create_new_wallet()
@@ -61,9 +64,27 @@ class TestConnection(TestCase):
         tx_args = {"sender_address": admin_wallet['address'],
                    "sender_private_key": encrypted_text
                    }
-        resp = call_contract_function(self.contract_address, 'mint', args, tx_args)
+        resp = call_contract_function(self.sharable_contract_address, 'mint', args, tx_args)
         # wait to validate tx before calling next tx
-        time.sleep(10)
+        #time.sleep(10)
+        assert resp['error'] == ''
+        assert len(resp['message']) == 66
+
+    def test_share_create_nft(self):
+        wallet_address = "0x0f145372eA0bBfbDc98837C14e966340b5C7B8ac"
+        admin_wallet = self.load_data_from_file('./api/config/config.json')['admin_wallet']
+        args = [wallet_address, 0]
+        config = self.load_data_from_file('./api/config/config.json')
+        iv = bytes.fromhex(config['iv'])
+        key = bytes.fromhex(config['key'])
+        enctypted_data = encrypt(key, iv, admin_wallet['private_key'])
+        encrypted_text = enctypted_data.hex()
+        tx_args = {"sender_address": admin_wallet['address'],
+                   "sender_private_key": encrypted_text
+                   }
+        resp = call_contract_function(self.sharable_contract_address, 'share', args, tx_args)
+        # wait to validate tx before calling next tx
+        #time.sleep(10)
         assert resp['error'] == ''
         assert len(resp['message']) == 66
 
@@ -85,6 +106,17 @@ class TestConnection(TestCase):
         decrypted_data = decrypt(key, iv, bytes.fromhex(encrypted_text))
         decrypted_text = decrypted_data.decode('utf8')
         assert decrypted_text == plain_text
+
+    def test_get_tx_status_ok(self):
+        tx_id = "0x7e4ad952a26a214f8235f607743998c130a35f351a7fec331447dadad4ba77e8"
+        tx_data = get_tx_status(self.contract_address, tx_id)
+        assert tx_data['status'] == 1
+        assert tx_data['token_id'] == 33
+
+    def test_get_tx_status_ko(self):
+        tx_id = "0xf4b93a0dc25219c000807cadc28a7b96c5547716bd6bbd5ae146f9d0a3a58ebb"
+        tx_data = get_tx_status(self.contract_address, tx_id)
+        assert tx_data['status'] == 0
 
     def test_transfer(self):
         wallet_address = "0x0f145372eA0bBfbDc98837C14e966340b5C7B8ac"
