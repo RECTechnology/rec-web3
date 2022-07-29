@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
-from api.web3_manager import create_new_wallet, create_nft, call_contract_function, get_wallet_nonce, get_tx_status
+from api.web3_manager import create_new_wallet, create_nft, call_contract_function, get_wallet_nonce, get_tx_status, \
+    get_wallet_balance, transfer
 
 app = Flask(__name__)
 
@@ -33,6 +34,19 @@ def get_transaction_status():
     transaction_id = args['transaction_id']
     status = get_tx_status(contract_address, transaction_id)
     return jsonify(status)
+
+@app.route('/get_balance')
+def get_balance():
+    args = request.args
+    if 'contract_address' not in args:
+        return jsonify({'message': '', 'error': 'contract_address param is required'})
+    if 'wallet' not in args:
+        return jsonify({'message': '', 'error': 'wallet param is required'})
+    print(args)
+    contract_address = args['contract_address']
+    wallet_address = args['wallet']
+    balance = get_wallet_balance(contract_address, wallet_address)
+    return jsonify({'message': 'success', 'balance': balance})
 
 
 @app.route('/create_wallet', methods=['POST'])
@@ -74,6 +88,34 @@ def contract_function_call():
     nonce = request_data['nonce'] if 'nonce' in request_data.keys() else None
 
     resp = call_contract_function(contract_address, function_name, args, tx_args, nonce)
+    return jsonify(resp)
+
+@app.route('/transfer', methods=['POST'])
+def transfer_eth():
+    request_data = request.json
+    print(request_data)
+    if 'contract_address' not in request_data:
+        return jsonify({'message': '', 'error': 'contract_address param is required'})
+    contract_address = request_data['contract_address']
+
+    if 'amount' not in request_data:
+        return jsonify({'message': '', 'error': 'amount param is required'})
+    amount = request_data['amount']
+
+    if 'to' not in request_data:
+        return jsonify({'message': '', 'error': 'to param is required'})
+    to = request_data['to']
+
+    if 'sender_address' not in request_data:
+        return jsonify({'message': '', 'error': 'sender_address param is required'})
+    sender_address = request_data['sender_address']
+
+    if 'sender_private_key' not in request_data:
+        return jsonify({'message': '', 'error': 'sender_private_key param is required'})
+    sender_pk = request_data['sender_private_key']
+
+    nonce = request_data['nonce'] if 'nonce' in request_data.keys() else None
+    resp = transfer(contract_address, amount, to, sender_address, sender_pk, nonce)
     return jsonify(resp)
 
 
