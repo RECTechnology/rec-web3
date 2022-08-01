@@ -1,12 +1,15 @@
 from flask import Flask, jsonify, request
 from api.web3_manager import create_new_wallet, create_nft, call_contract_function, get_wallet_nonce, get_tx_status, \
     get_wallet_balance, transfer
+import logging
+
+logging.basicConfig(filename = 'logs/app.log', level=logging.INFO, format = f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 app = Flask(__name__)
 
-
 @app.route('/test')
 def test():
+    app.logger.info("Getting test")
     return jsonify({'message': 'success'})
 
 @app.route('/get_nonce')
@@ -17,9 +20,11 @@ def get_nonce():
     if 'wallet' not in args:
         return jsonify({'message': '', 'error': 'wallet param is required'})
     print(args)
+    app.logger.info("Getting nonce")
     contract_address = args['contract_address']
     wallet_address = args['wallet']
     nonce = get_wallet_nonce(contract_address, wallet_address)
+    app.logger.info('nonce -> %s', nonce)
     return jsonify({'message': 'success', 'nonce': nonce})
 
 @app.route('/get_transaction_status')
@@ -33,6 +38,7 @@ def get_transaction_status():
     contract_address = args['contract_address']
     transaction_id = args['transaction_id']
     status = get_tx_status(contract_address, transaction_id)
+    app.logger.info('status -> %s', status)
     return jsonify(status)
 
 @app.route('/get_balance')
