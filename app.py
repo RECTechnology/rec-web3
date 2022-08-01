@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 @app.route('/test')
 def test():
-    app.logger.info("Getting test")
+    app.logger.info("Getting test 2")
     return jsonify({'message': 'success'})
 
 @app.route('/get_nonce')
