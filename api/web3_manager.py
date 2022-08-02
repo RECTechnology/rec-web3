@@ -72,6 +72,7 @@ def get_wallet_nonce(contract_address, address):
 
 
 def call_contract_function(contract_address, function_name, args, tx_args=None, nonce=None):
+    
     contract, web3 = get_contract(contract_address)
     contract_function = getattr(contract.functions, function_name)
 
@@ -102,12 +103,15 @@ def call_contract_function(contract_address, function_name, args, tx_args=None, 
             sender_private_key = get_decrypted_text(tx_args['sender_private_key'])
 
             signed_txn = web3.eth.account.sign_transaction(tx, private_key=sender_private_key)
+            
             resp = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
             hex_resp = web3.toHex(resp)
             if len(hex_resp) == 66: return {'message': hex_resp, 'error': ''}
             return {'message': "", 'error': hex_resp}
     except Exception as e:
-        return {'message': '', 'error': str(e)}
+        print(e)
+        print(e.args[0]['code'])
+        return {'message': e.args[0]['message'], 'error': e.args[0]['code']}
 
 
 def get_decrypted_text(encrypted_text):
