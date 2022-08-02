@@ -82,6 +82,7 @@ def create_nft_():
 def contract_function_call():
     request_data = request.json
     print(request_data)
+    app.logger.info('nonce -> %s', nonce)
     app.logger.info(request_data)
     if 'function_name' not in request_data:
         return jsonify({'message': '', 'error': 'function_name param is required'})
@@ -101,6 +102,7 @@ def contract_function_call():
 def transfer_eth():
     request_data = request.json
     print(request_data)
+    app.logger.info(request_data)
     if 'contract_address' not in request_data:
         return jsonify({'message': '', 'error': 'contract_address param is required'})
     contract_address = request_data['contract_address']
