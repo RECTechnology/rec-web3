@@ -123,15 +123,18 @@ def get_decrypted_text(encrypted_text):
     return decrypted_text
 
 
-def get_tx_status(contract_address, tx_id, deadline=600):
+def get_tx_status(contract_address, tx_id, type, deadline=600):
     _, web3 = get_contract(contract_address)
     tx_deadline = time.time() + deadline
     while time.time() < tx_deadline:
         try:
             tx_data = web3.eth.get_transaction_receipt(tx_id)
             if tx_data['status'] == 1:
-                token_id = web3.toInt(tx_data.logs[0].topics[3])
-                return {"error": "", "status": tx_data['status'],"from": tx_data['from'], "to": tx_data['to'], "token_id": token_id}
+                if type == 'nft':
+                    token_id = web3.toInt(tx_data.logs[0].topics[3])
+                    return {"error": "", "status": tx_data['status'],"from": tx_data['from'], "to": tx_data['to'], "token_id": token_id}
+                else:
+                    return {"error": "", "status": tx_data['status'],"from": tx_data['from'], "to": tx_data['to']}
             else:
                 return {"error": "", "status": tx_data['status'], "from": tx_data['from'], "to": tx_data['to']}
         except Exception as e:
