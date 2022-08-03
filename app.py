@@ -34,10 +34,15 @@ def get_transaction_status():
         return jsonify({'message': '', 'error': 'contract_address param is required'})
     if 'transaction_id' not in args:
         return jsonify({'message': '', 'error': 'transaction_id param is required'})
+    if 'transaction_type' not in args:
+        type = 'transfer'
+    else:
+        type = args['transaction_type']
+
     print(args)
     contract_address = args['contract_address']
     transaction_id = args['transaction_id']
-    status = get_tx_status(contract_address, transaction_id)
+    status = get_tx_status(contract_address, transaction_id, type)
     app.logger.info('status -> %s', status)
     return jsonify(status)
 
