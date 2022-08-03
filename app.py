@@ -40,6 +40,7 @@ def get_transaction_status():
         type = args['transaction_type']
 
     print(args)
+    app.logger.info('args -> %s', args)
     app.logger.info('type -> %s', type)
     contract_address = args['contract_address']
     transaction_id = args['transaction_id']
