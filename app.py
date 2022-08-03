@@ -82,7 +82,6 @@ def create_nft_():
 def contract_function_call():
     request_data = request.json
     print(request_data)
-    app.logger.info('nonce -> %s', nonce)
     app.logger.info(request_data)
     if 'function_name' not in request_data:
         return jsonify({'message': '', 'error': 'function_name param is required'})
