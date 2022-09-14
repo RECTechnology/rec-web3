@@ -45,7 +45,6 @@ def create_nft(contract_address, wallet, nft_id, admin_address, admin_pk):
     hex_tx = web3.toHex(tx_token)
     return hex_tx
 
-
 def get_contract(contract_address):
     contract_data = load_data_from_file('./chains_data/contracts.json')[contract_address]
     chain = load_data_from_file('./chains_data/chains.json')[contract_data['chain']]
