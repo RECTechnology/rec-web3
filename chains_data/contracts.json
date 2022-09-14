@@ -6,5 +6,8 @@
   "0x25f4c7adb709F47eb9b276F64409FC963d8c0CD0": {"name": "Like_test", "chain": "3", "abi": "Like_test_abi"},
 
   "0xaB81fFeB4aF5f90C6c85fe572f51DEEe5B12C792": {"name": "fake_nft", "chain": "97", "abi": "fake_nft_abi"},
-  "0xaf33ecfb3E5D07C232fC3Ec8992e7de43485a70a_": {"name": "s_nft_test", "chain": "97", "abi": "fake_nft_abi"}
+  "0xaf33ecfb3E5D07C232fC3Ec8992e7de43485a70a_": {"name": "s_nft_test", "chain": "97", "abi": "fake_nft_abi"},
+
+  "0x629a5de457c47b3d894a4506ad897ff03d059ff5": {"name": "s_nft_v2", "chain": "80001", "abi": "sharable_nft_v2_abi"},
+  "0x4a89d808272b553982ea917703492f1df3cd0c47": {"name": "l_nft_v2", "chain": "80001", "abi": "like_nft_v2_abi"}
 }
