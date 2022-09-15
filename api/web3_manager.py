@@ -21,18 +21,18 @@ def create_new_wallet():
 
 
 def get_wallet_balance(contract_address, wallet_address):
-    contract, web3 = get_contract(contract_address)
+    contract, web3, chain_id = get_contract(contract_address)
     resp = float(web3.fromWei(web3.eth.get_balance(wallet_address), 'ether'))
     return resp
 
 def get_wallet_nft_balance(contract_address, wallet_address):
-    contract, web3 = get_contract(contract_address)
+    contract, web3, chain_id = get_contract(contract_address)
     resp = contract.functions.balanceOf(wallet_address).call()
     return resp
 
 
 def create_nft(contract_address, wallet, nft_id, admin_address, admin_pk):
-    contract, web3 = get_contract(contract_address)
+    contract, web3, chain_id = get_contract(contract_address)
 
     mint_tx = contract.functions.mint(wallet)
     mint_tx = mint_tx.buildTransaction({
@@ -47,11 +47,12 @@ def create_nft(contract_address, wallet, nft_id, admin_address, admin_pk):
 
 def get_contract(contract_address):
     contract_data = load_data_from_file('./chains_data/contracts.json')[contract_address]
+    chain_id = contract_data['chain']
     chain = load_data_from_file('./chains_data/chains.json')[contract_data['chain']]
     web3 = Web3(Web3.HTTPProvider(chain['node']))
     contract_abi = load_data_from_file('./chains_data/contracts_abi.json')[contract_data['abi']]
     contract = web3.eth.contract(address=web3.toChecksumAddress(contract_address), abi=contract_abi)
-    return contract, web3
+    return contract, web3, chain_id
 
 
 def load_data_from_file(route):
@@ -72,7 +73,7 @@ def get_wallet_nonce(contract_address, address):
 
 def call_contract_function(contract_address, function_name, args, tx_args=None, nonce=None):
     
-    contract, web3 = get_contract(contract_address)
+    contract, web3, chain_id = get_contract(contract_address)
     contract_function = getattr(contract.functions, function_name)
 
     if args is None:
@@ -123,7 +124,7 @@ def get_decrypted_text(encrypted_text):
 
 
 def get_tx_status(contract_address, tx_id, type, deadline=600):
-    _, web3 = get_contract(contract_address)
+    _, web3, chain_id = get_contract(contract_address)
     tx_deadline = time.time() + deadline
     while time.time() < tx_deadline:
         try:
@@ -142,7 +143,7 @@ def get_tx_status(contract_address, tx_id, type, deadline=600):
 
 
 def transfer(contract_address, amount, to, from_addres, from_pk, nonce=None):
-    _, web3 = get_contract(contract_address)
+    _, web3, chain_id = get_contract(contract_address)
     try:
         transaction_args = {}
         current_nonce = web3.eth.get_transaction_count(from_addres)
@@ -157,6 +158,7 @@ def transfer(contract_address, amount, to, from_addres, from_pk, nonce=None):
         transaction_args['value'] = web3.toWei(amount, 'ether')
         transaction_args['gas'] = 2000000
         transaction_args['gasPrice'] = int(web3.eth.gasPrice)
+        transaction_args['chainId'] = int(chain_id)
         print(amount)
         print(from_addres)
         print(transaction_args)
