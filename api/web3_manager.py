@@ -11,12 +11,7 @@ def create_new_wallet():
     priv = secrets.token_hex(32)
     private_key = "0x" + priv
     address = Account.from_key(private_key).address
-    config = load_data_from_file('./api/config/config.json')
-    iv = config['iv']
-    key = config['key']
-    iv = bytes.fromhex(iv)
-    key = bytes.fromhex(key)
-    encrypted_private_key = encrypt(key, iv, private_key).hex()
+    encrypted_private_key = encrypt(private_key).hex()
     return address, encrypted_private_key
 
 
@@ -115,10 +110,7 @@ def call_contract_function(contract_address, function_name, args, tx_args=None, 
 
 
 def get_decrypted_text(encrypted_text):
-    config = load_data_from_file('./api/config/config.json')
-    iv = bytes.fromhex(config['iv'])
-    key = bytes.fromhex(config['key'])
-    decrypted_data = decrypt(key, iv, bytes.fromhex(encrypted_text))
+    decrypted_data = decrypt(bytes.fromhex(encrypted_text))
     decrypted_text = decrypted_data.decode('utf8')
     return decrypted_text
 
