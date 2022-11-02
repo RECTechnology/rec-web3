@@ -6,7 +6,6 @@ import secrets, sys
 from web3 import Web3
 from api.aes_manager import encrypt, decrypt
 
-
 def create_new_wallet():
     priv = secrets.token_hex(32)
     private_key = "0x" + priv
