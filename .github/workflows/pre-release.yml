@@ -13,9 +13,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_REGISTRY }}/rec-web3-atarca-flask:sandbox
+      
     - name: Docker Registry Login
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin ${{ secrets.DOCKER_REGISTRY }}
+      
     - name: Upload Docker image to Registry
       run: docker push ${{ secrets.DOCKER_REGISTRY }}/rec-web3-atarca-flask:sandbox
+    
+    - name: Deploy
+      uses: joelwmale/webhook-action@1.0.1
+      env:
+        WEBHOOK_URL: ${{ secrets.WEBHOOK_DEPLOY_SANDBOX }}
+        data: "Hello from github actions!"
