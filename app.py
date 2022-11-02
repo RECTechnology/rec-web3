@@ -7,6 +7,8 @@ logging.basicConfig(filename = 'logs/app.log', level=logging.INFO, format = f'%(
 
 app = Flask(__name__)
 
+app.config.from_pyfile('settings.py')
+
 @app.route('/test')
 def test():
     app.logger.info("Getting test 2")
