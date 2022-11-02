@@ -3,7 +3,8 @@ name: Docker Image CI [PRE-RELEASE]
 on:
   push:
     tags:
-      - '^v*-rc[0-9]+$'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-rc[0-9]+'
 
 jobs:
 
