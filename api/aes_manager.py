@@ -12,7 +12,7 @@ def encrypt(_plaintext):
     return ciphertext
 
 
-def decrypt(_key, _iv, _ciphertext):
+def decrypt(_ciphertext):
     # Decryption with AES-256-CBC
     iv = bytes.fromhex(current_app.config.get('IV'))
     key = bytes.fromhex(current_app.config.get('KEY'))
