@@ -103,9 +103,11 @@ def call_contract_function(contract_address, function_name, args, tx_args=None, 
             if len(hex_resp) == 66: return {'message': hex_resp, 'error': ''}
             return {'message': "", 'error': hex_resp}
     except Exception as e:
-        print(e)
-        print(e.args[0]['code'])
-        return {'message': e.args[0]['message'], 'error': e.args[0]['code']}
+        if e.args[0] == 'execution reverted: Method caller must be the owner of token':
+            return {'message': '', 'error': 'Method caller must be the owner of token'}
+        else:
+            print(e.args[0]['code'])
+            return {'message': e.args[0]['message'], 'error': e.args[0]['code']}
 
 
 def get_decrypted_text(encrypted_text):
