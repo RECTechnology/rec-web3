@@ -12,5 +12,8 @@
   "0x4a89d808272b553982ea917703492f1df3cd0c47": {"name": "l_nft_v2", "chain": "80001", "abi": "like_nft_v2_abi"},
 
   "0xe29a1079286081c7a0aa5ec4b0d533e024bdabd6": {"name": "b2b_sharable_nft", "chain": "137", "abi": "b2b_sharable_nft_abi"},
-  "0x9110a9bdd3c4fd31f1e864aaa39b86bd5a11527a": {"name": "b2b_like_nft", "chain": "137", "abi": "b2b_like_nft_abi"}
+  "0x9110a9bdd3c4fd31f1e864aaa39b86bd5a11527a": {"name": "b2b_like_nft", "chain": "137", "abi": "b2b_like_nft_abi"},
+
+  "0x2Ebc12b28bb2A418Fc3EA2BD27273Ba031936D60": {"name": "b2c_sharable_nft", "chain": "137", "abi": "b2c_sharable_nft_abi"},
+  "0x827692DB2f5481f26880bf68619335b704Ec6a64": {"name": "b2c_like_nft", "chain": "137", "abi": "b2c_like_nft_abi"}
 }
