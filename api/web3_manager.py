@@ -106,8 +106,8 @@ def call_contract_function(contract_address, function_name, args, tx_args=None, 
         if e.args[0] == 'execution reverted: Method caller must be the owner of token':
             return {'message': '', 'error': 'Method caller must be the owner of token'}
         else:
-            print(e.args[0]['code'])
-            return {'message': e.args[0]['message'], 'error': e.args[0]['code']}
+            print(e.args[0])
+            return {'message': e.args[0], 'error': 'other error'}
 
 
 def get_decrypted_text(encrypted_text):
