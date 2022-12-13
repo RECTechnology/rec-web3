@@ -104,6 +104,7 @@ def contract_function_call():
     nonce = request_data['nonce'] if 'nonce' in request_data.keys() else None
 
     resp = call_contract_function(contract_address, function_name, args, tx_args, nonce)
+    app.logger.info(resp)
     return jsonify(resp)
 
 @app.route('/transfer', methods=['POST'])
