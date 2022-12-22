@@ -5,6 +5,7 @@ from eth_account import Account
 import secrets, sys
 from web3 import Web3
 from api.aes_manager import encrypt, decrypt
+import logging;
 
 def create_new_wallet():
     priv = secrets.token_hex(32)
@@ -66,7 +67,7 @@ def get_wallet_nonce(contract_address, address):
 
 
 def call_contract_function(contract_address, function_name, args, tx_args=None, nonce=None):
-    
+    logging.info("call_contract_function")
     contract, web3, chain_id = get_contract(contract_address)
     contract_function = getattr(contract.functions, function_name)
 
